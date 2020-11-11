@@ -1,2 +1,2 @@
 # RISCV-CPU
-RISCV-CPU written by verilog
+A RISCV-CPU written by verilog
