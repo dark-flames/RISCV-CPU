@@ -1011,8 +1011,6 @@ int data[] = {
 int stack_r[100];
 int stack_l[100];
 
-
-
 int main() {
     int ptr = 0;
     _PUSH(0, SIZE);

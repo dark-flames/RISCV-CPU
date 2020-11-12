@@ -14,7 +14,7 @@ START_UP = target/startup.o
 SRC = tests/test_bench.v src/*.v src/Modules/*.v
 TESTCASE_PATH = tests/sort.c
 
-all: riscv testcase
+all: testcase riscv
 
 riscv:
 	iverilog $(SRC) -o target/riscv
@@ -39,7 +39,7 @@ target/sort.elf: $(OBJS)
 	$(LD) $(LD_FLAGS) -o $@ $(OBJS)
 
 target/startup.o:
-	$(AS) $(AS_FLAGS) -o $(START_UP) tests/startup.s
+	$(AS) $(AS_FLAGS) tests/startup.s -o $(START_UP)
 
 target/sort.o:
 	$(CC) $(C_FLAGS) -c -o target/sort.o $(TESTCASE_PATH)
