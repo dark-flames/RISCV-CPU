@@ -23,6 +23,9 @@ testcase: target/sort.mif target/sort.verilog target/sort.lst
 
 vcd: target/riscv.vcd
 
+gtkwave: target/riscv.vcd
+	gtkwave target/riscv.vcd
+
 target/sort.mif: target/sort.verilog
 	tests/vlogdump2mif.py target/sort.verilog -s
 
@@ -43,6 +46,8 @@ target/sort.o:
 
 target/riscv.vcd: target/riscv target/sort_data.mif target/sort_prog.mif
 	vvp -n target/riscv > target/result.txt
+
+
 
 clean:
 	$(RM) *~ target/* *.log

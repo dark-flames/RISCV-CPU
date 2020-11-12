@@ -19,12 +19,12 @@ module alu(A, B, C, Y);
     always @(A or B or C)
         begin
             case (C)
-                `IADD: S <= {1'b0, A}+{1'b0, B};
-                    `IAND: S <= {1'b0, A} & {1'b0, B};
-                    `IOR: S <= {1'b0, A} | {1'b0, B};
-                    `IXOR: S <= {1'b0, A} ^ {1'b0, B};
-                    `IPAS: S <= {1'b0, B};
-                default: S <= {1'b0, A}-{1'b0, B}; // sub and compare
+                `IADD:S <= {1'b0, A}+{1'b0, B};
+                `IAND: S <= {1'b0, A} & {1'b0, B};
+                `IOR: S <= {1'b0, A} | {1'b0, B};
+                `IXOR: S <= {1'b0, A} ^ {1'b0, B};
+                `IPAS: S <= {1'b0, B};
+                default:S <= {1'b0, A}-{1'b0, B}; // sub and compare
             endcase
         end
 
@@ -38,13 +38,13 @@ module alu(A, B, C, Y);
     always @(S or zero or lt_unsigned or lt or C)
         begin
             case (C)
-                `ILT: Y <= lt ? 1:0;
-                    `ILTU: Y <= lt_unsigned ? 1:0;
-                    `IGE: Y <= lt ? 0:1;
-                    `IGEU: Y <= lt_unsigned ? 0:1;
-                    `IEQ: Y <= zero ? 1:0;
-                    `INE: Y <= zero ? 0:1;
-                default: Y <= S[31:0];
+                `ILT:Y <= lt ? 1:0;
+                `ILTU: Y <= lt_unsigned ? 1:0;
+                `IGE: Y <= lt ? 0:1;
+                `IGEU: Y <= lt_unsigned ? 0:1;
+                `IEQ: Y <= zero ? 1:0;
+                `INE: Y <= zero ? 0:1;
+                default:Y <= S[31:0];
             endcase
         end
 

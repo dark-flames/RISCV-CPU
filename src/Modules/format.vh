@@ -53,9 +53,21 @@
 `define OP_FUNC3	7'b1110011
 
 // Instruction Format Type ( 00: illegal instruction )
+`define FT_NONE 3'b000
 `define FT_R	3'b001
 `define FT_I	3'b010
 `define FT_S	3'b011
 `define FT_U	3'b100
 `define FT_J	3'b101
 `define FT_B	3'b110
+
+// write back type
+`define WB_NORMAL 2'b00
+`define WB_LOAD 2'b01
+`define WB_JAL 2'b10
+
+// data memory status
+`define DM_NONE 2'b00
+`define DM_BYTE 2'b01
+`define DM_HWORD 2'b10
+`define DM_WORD 2'b11

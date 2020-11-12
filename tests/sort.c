@@ -1,5 +1,9 @@
 #define SIZE 1000
 
+#define _PUSH(l, r) stack_r[ptr] = (r);stack_l[ptr++] = (l);
+#define _POP(l, r) r = stack_r[ptr-1]; l = stack_l[(ptr--)-1];
+#define _EMPTY() ptr == 0
+
 int data[] = {
         465925370,
         -104852588,
@@ -1004,16 +1008,40 @@ int data[] = {
 
 };
 
-int main() {
-    int i, j;
+int stack_r[100];
+int stack_l[100];
 
-    for (i = 0; i < SIZE - 1; i++) {
-        for (j = i + 1; j < SIZE; j++) {
-            if (data[i] > data[j]) {
-                int tmp = data[i];
-                data[i] = data[j];
-                data[j] = tmp;
+
+
+int main() {
+    int ptr = 0;
+    _PUSH(0, SIZE);
+    while(!_EMPTY()) {
+        int left, right;
+        _POP(left, right);
+        if(left < right) {
+            int previous = left - 1;
+            int current = left;
+            int p = data[right - 1];
+
+            while (current < right) {
+                if (data[current] < p && ++previous != current) {
+                    int t = data[current];
+                    data[current] = data[previous];
+                    data[previous] = t;
+                }
+
+                current++;
             }
+
+            if (data[++previous] != p) {
+                int t = data[previous];
+                data[previous] = data[right - 1];
+                data[right - 1] = t;
+            }
+
+            _PUSH(left, previous);
+            _PUSH(previous + 1, right)
         }
     }
 
