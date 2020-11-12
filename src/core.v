@@ -4,10 +4,10 @@
 module riscv#(
     parameter IMEM_BASE=32'h0000_0000,
     parameter IMEM_SIZE=32768,    // 32kW = 128kB
-    parameter IMEM_FILE="target/sort_prog.mif",
+    parameter IMEM_FILE="target/prog.mif",
     parameter DMEM_BASE=32'h0010_0000,
     parameter DMEM_SIZE=32768,    // 32kW = 128kB
-    parameter DMEM_FILE="target/sort_data.mif"
+    parameter DMEM_FILE="target/data.mif"
 )(
     input CLK,  // clock
     input RSTN, // reset

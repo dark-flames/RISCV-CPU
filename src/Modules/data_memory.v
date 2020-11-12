@@ -1,7 +1,7 @@
 `include "src/config.vh"
 
 module dmem#(
-    parameter INIT_FILE="target/sort_data.mif",
+    parameter INIT_FILE="target/data.mif",
     parameter DMEM_SIZE=32768
 )(
     input CLK,

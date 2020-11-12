@@ -9,45 +9,46 @@ OBJ_DUMP= $(CROSS_COMPILE)objdump
 C_FLAGS  = -O -march=rv32i -ffreestanding
 AS_FLAGS = --gstabs+ -march=rv32i
 LD_FLAGS = -nostartfiles --no-relax -Bstatic -T tests/link.ld -nostdlib
-OBJS	= target/startup.o target/sort.o
+OBJS	= target/startup.o target/${PROGRAM}.o
 START_UP = target/startup.o
 SRC = tests/test_bench.v src/*.v src/Modules/*.v
-TESTCASE_PATH = tests/sort.c
 
 all: testcase riscv
 
 riscv:
 	iverilog $(SRC) -o target/riscv
 
-testcase: target/sort.mif target/sort.verilog target/sort.lst
+testcase: target/${PROGRAM}.mif target/${PROGRAM}.verilog target/${PROGRAM}.lst
 
 vcd: target/riscv.vcd
 
 gtkwave: target/riscv.vcd
 	gtkwave target/riscv.vcd
 
-target/sort.mif: target/sort.verilog
-	tests/vlogdump2mif.py target/sort.verilog -s
+target/${PROGRAM}.mif: target/${PROGRAM}.verilog
+	tests/vlogdump2mif.py target/${PROGRAM}.verilog -s
+	mv data.mif target/data.mif
+	mv prog.mif target/prog.mif
 
-target/sort.verilog: target/sort.elf
+target/${PROGRAM}.verilog: target/${PROGRAM}.elf
 	$(OBJ_COPY) -O verilog  $< $@
 
-target/sort.lst: target/sort.elf
+target/${PROGRAM}.lst: target/${PROGRAM}.elf
 	$(OBJ_DUMP) -D $< > $@
 
-target/sort.elf: $(OBJS)
+target/${PROGRAM}.elf: $(OBJS)
 	$(LD) $(LD_FLAGS) -o $@ $(OBJS)
 
 target/startup.o:
 	$(AS) $(AS_FLAGS) tests/startup.s -o $(START_UP)
 
-target/sort.o:
-	$(CC) $(C_FLAGS) -c -o target/sort.o $(TESTCASE_PATH)
+target/${PROGRAM}.o:
+	$(CC) $(C_FLAGS) -c -o target/${PROGRAM}.o tests/${PROGRAM}.c
 
-target/riscv.vcd: target/riscv target/sort_data.mif target/sort_prog.mif
+target/riscv.vcd: target/riscv target/data.mif target/prog.mif
 	vvp -n target/riscv > target/result.txt
 
 
-
+.PHONY: clean
 clean:
 	$(RM) *~ target/* *.log

@@ -25,15 +25,15 @@ verilog_index = in_file.find(".verilog")
 if verilog_index == -1:
     verilog_file = in_file + ".verilog"
     if split_mode:
-        out_prog_file = in_file + "_prog.mif"
-        out_data_file = in_file + "_data.mif"
+        out_prog_file = "prog.mif"
+        out_data_file = "data.mif"
     else:
         out_file = in_file + ".mif"
 else:
     verilog_file = in_file
     if split_mode:
-        out_prog_file = in_file[0:verilog_index] + "_prog.mif"
-        out_data_file = in_file[0:verilog_index] + "_data.mif"
+        out_prog_file = "prog.mif"
+        out_data_file = "data.mif"
     else:
         out_file = in_file[0:verilog_index] + ".mif"
 

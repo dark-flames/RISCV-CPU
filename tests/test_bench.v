@@ -54,8 +54,8 @@ module riscv_tb ();
                 $finish;
             end
 
-    riscv #( .IMEM_FILE("target/sort_prog.mif"),
-        .DMEM_FILE("target/sort_data.mif"),
+    riscv #( .IMEM_FILE("target/prog.mif"),
+        .DMEM_FILE("target/data.mif"),
         .IMEM_SIZE(32768),
         .DMEM_SIZE(32768)
     ) riscv ( .CLK(CLK), .RSTN(RSTN) );
