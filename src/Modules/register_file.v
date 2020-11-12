@@ -1,12 +1,12 @@
-module rf(CLK, RNUM1, RNUM2, RDATA1, RDATA2, WNUM, WDATA);
-    input CLK;
+module rf(clk, RNUM1, RNUM2, RDATA1, RDATA2, WNUM, WDATA);
+    input clk;
     input [4:0] RNUM1, RNUM2, WNUM;
     output [31:0] RDATA1, RDATA2;
     input [31:0] WDATA;
 
     reg [31:0] REGISTER_FILE [1:31];
 
-    always @(posedge CLK)
+    always @(posedge clk)
         begin
             if (WNUM != 5'b00000)
                 REGISTER_FILE[WNUM] <= WDATA;

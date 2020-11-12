@@ -4,12 +4,12 @@ module dmem#(
     parameter INIT_FILE="target/data.mif",
     parameter DMEM_SIZE=32768
 )(
-    input CLK,
-    input [31:2] ADDR,
-    input [31:0] DATAI,
-    output [31:0] DATAO,
-    input CE,
-    input [3:0] WSTB
+    input clk,
+    input [31:2] address,
+    input [31:0] write_data,
+    output [31:0] read_output,
+    input enable,
+    input [3:0] write_flag
 );
 
 
@@ -23,20 +23,20 @@ module dmem#(
             $readmemh(INIT_FILE, mem);
         end
 
-    assign datam = mem[ADDR[16:2]];
-    assign DATAO = datam;
+    assign datam = mem[address[16:2]];
+    assign read_output = datam;
 
     always @(*)
         begin
             dataw <= datam;
-            if (WSTB[0]) dataw[7:0] <= DATAI[7:0];
-            if (WSTB[1]) dataw[15:8] <= DATAI[15:8];
-            if (WSTB[2]) dataw[23:16] <= DATAI[23:16];
-            if (WSTB[3]) dataw[31:24] <= DATAI[31:24];
+            if (write_flag[0]) dataw[7:0] <= write_data[7:0];
+            if (write_flag[1]) dataw[15:8] <= write_data[15:8];
+            if (write_flag[2]) dataw[23:16] <= write_data[23:16];
+            if (write_flag[3]) dataw[31:24] <= write_data[31:24];
         end
 
-    always @(posedge CLK)
-        if (CE && (| WSTB))
-            mem[ADDR[16:2]] <= dataw;
+    always @(posedge clk)
+        if (enable && (| write_flag))
+            mem[address[16:2]] <= dataw;
 
 endmodule

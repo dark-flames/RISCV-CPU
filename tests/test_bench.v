@@ -27,9 +27,9 @@ module riscv_tb ();
         integer 	   i;
         reg [31:0] data;
 
-        for( i = addr ; i<1024 ; i=i+1 )
+        for( i = addr ; i < 1000 ; i=i+1 )
             begin
-                data = riscv.dmem.mem[i];
+                data = riscv.daligner.dmem.mem[i];
                 $display( "%08x %02x%02x%02x%02x", addr+i*4,
                     data[7:0], data[15:8], data[23:16], data[31:24] );
             end
@@ -58,20 +58,20 @@ module riscv_tb ();
         .DMEM_FILE("target/data.mif"),
         .IMEM_SIZE(32768),
         .DMEM_SIZE(32768)
-    ) riscv ( .CLK(CLK), .RSTN(RSTN) );
+    ) riscv ( .clk(CLK), .reset_n(RSTN) );
 
     //
     // Debug code
     //
 `ifdef ST_DEBUG
     always @( negedge CLK )
-    if(  ( riscv.DMWE ) && ( riscv.DADDR[31:20] == 12'h001 ) )
-    $display( "ST  :%08h %08h %01h ", riscv.DADDR, riscv.RF_DATA2, riscv.DMWE );
+    if(  ( riscv.DMWE ) && ( riscv.alu_result[31:20] == 12'h001 ) )
+    $display( "ST  :%08h %08h %01h ", riscv.alu_result, riscv.RF_DATA2, riscv.DMWE );
 `endif
 `ifdef LD_DEBUG
     always @( negedge CLK )
-    if(  ( riscv.DMRE  ) && ( riscv.DADDR[31:20] == 12'h001 ) )
-    $display( "LD  :%08h %08h %01h ", riscv.DADDR, riscv.daligner.DATAO, riscv.DMRE );
+    if(  ( riscv.DMRE  ) && ( riscv.alu_result[31:20] == 12'h001 ) )
+    $display( "LD  :%08h %08h %01h ", riscv.alu_result, riscv.daligner.DATAO, riscv.DMRE );
 `endif
 
 endmodule

@@ -7,12 +7,12 @@ module instruction_decoder(
     output reg [31:0] immediate_value,
     output reg [2:0] instruction_format_type,
     output reg [1:0] write_back_type,
-    output reg [1:0] data_memory_read_status,
-    output reg [1:0] data_memory_write_status,
+    output reg [1:0] read_status,
+    output reg [1:0] write_status,
     output reg [4:0] destination_register_number,
-    output reg data_memory_load_signed,
+    output reg load_signed,
     output reg pc_for_input_a,
-    output reg jump
+    output reg change_branch_instruction
 );
 
     always @(IR)
@@ -20,11 +20,12 @@ module instruction_decoder(
             instruction_format_type <= `FT_NONE;
             alu_instruction <= `IADD;  // default operation
             write_back_type <= `WB_NORMAL;
-            data_memory_write_status <= `DM_NONE;  // no store
-            data_memory_read_status <= `DM_NONE;
-            data_memory_load_signed <= 0;   // unsigned
+            write_status <= `DM_NONE;  // no store
+            read_status <= `DM_NONE;
+            load_signed <= 0;   // unsigned
             pc_for_input_a <= 0;   // no use PC for RS1x
-            jump <= 0;  // no branch
+            change_branch_instruction <= 0;  // no branch
+        
             case (IR[6:0])
                 `OP_LUI:
                 begin
@@ -40,19 +41,19 @@ module instruction_decoder(
                 begin
                     instruction_format_type <= `FT_J;
                     pc_for_input_a <= 1;
-                    jump <= 1;
+                    change_branch_instruction <= 1;
                     write_back_type <= `WB_JAL;
                 end
                 `OP_JALR:
                 begin
                     instruction_format_type <= `FT_I;
-                    jump <= 1;
+                    change_branch_instruction <= 1;
                     write_back_type <= `WB_JAL;
                 end
                 `OP_BR:
                 begin
                     instruction_format_type <= `FT_B;
-                    jump <= 1'b1;
+                    change_branch_instruction <= 1'b1;
                     case (`IR_F3 )
                         3'b000: begin alu_instruction <= `IEQ; end // beq
                         3'b001: begin alu_instruction <= `INE; end // bne
@@ -68,34 +69,35 @@ module instruction_decoder(
                     write_back_type <= `WB_LOAD;
                     case (`IR_F3 )
                         3'b000: begin
-                            data_memory_read_status <= `DM_BYTE;
-                            data_memory_load_signed <= 1;
+                            read_status <= `DM_BYTE;
+                            load_signed <= 1;
                         end // lb
                         3'b001: begin
-                            data_memory_read_status <= `DM_HWORD;
-                            data_memory_load_signed <= 1;
+                            read_status <= `DM_HWORD;
+                            load_signed <= 1;
                         end // lh
                         3'b010: begin
-                            data_memory_read_status <= `DM_WORD;
-                            data_memory_load_signed <= 1;
+                            read_status <= `DM_WORD;
+                            load_signed <= 1;
                         end // lw
-                        3'b100: begin data_memory_read_status <= `DM_BYTE; end // lbu
-                        3'b101: begin data_memory_read_status <= `DM_HWORD; end // lhu
-                        3'b110: begin data_memory_read_status <= `DM_WORD; end // lwu
+                        3'b100: begin read_status <= `DM_BYTE; end // lbu
+                        3'b101: begin read_status <= `DM_HWORD; end // lhu
+                        3'b110: begin read_status <= `DM_WORD; end // lwu
                     endcase // case ( `IR_F3 )
                 end
                 `OP_STORE:
                 begin
                     instruction_format_type <= `FT_S;
                     case (`IR_F3)
-                        3'b000: begin data_memory_write_status <= `DM_BYTE; end // sb
-                        3'b001: begin data_memory_write_status <= `DM_HWORD; end // sh
-                        3'b010: begin data_memory_write_status <= `DM_WORD; end // sw
+                        3'b000: begin write_status <= `DM_BYTE; end // sb
+                        3'b001: begin write_status <= `DM_HWORD; end // sh
+                        3'b010: begin write_status <= `DM_WORD; end // sw
                     endcase // case ( `IR_F3 )
                 end
                 `OP_FUNC1: // Immediate
                 begin
                     instruction_format_type <= `FT_I;
+
                     case (`IR_F3)
                         3'b000: begin alu_instruction <= `IADD; end // addi
                         3'b001:

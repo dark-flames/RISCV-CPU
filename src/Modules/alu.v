@@ -1,12 +1,11 @@
 `include "src/Modules/format.vh"
 
-module alu(A, B, C, Y);
-    input [31:0] A;
-    input [31:0] B;
-    input [4:0] C;
-    output [31:0] Y;
-
-    reg [31:0] Y;       // redefinition for non-blocking assignment
+module alu(
+    input [31:0] A,
+    input [31:0] B,
+    input [4:0] C,
+    output reg [31:0] Y
+);
 
     // internal wire
     reg [32:0] S;      // temporary result
@@ -19,12 +18,12 @@ module alu(A, B, C, Y);
     always @(A or B or C)
         begin
             case (C)
-                `IADD:S <= {1'b0, A}+{1'b0, B};
+                `IADD:S <= {1'b0, A} + {1'b0, B};
                 `IAND: S <= {1'b0, A} & {1'b0, B};
                 `IOR: S <= {1'b0, A} | {1'b0, B};
                 `IXOR: S <= {1'b0, A} ^ {1'b0, B};
                 `IPAS: S <= {1'b0, B};
-                default:S <= {1'b0, A}-{1'b0, B}; // sub and compare
+                default:S <= {1'b0, A} - {1'b0, B}; // sub and compare
             endcase
         end
 
