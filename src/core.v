@@ -144,9 +144,9 @@ module riscv#(
     always @(write_back_type or write_back_result or PC or execute_result)
         begin
             case (write_back_type)
-                2'b01: write_back_value <= write_back_result;    // Load inst.
-                2'b10: write_back_value <= PC + 4;    // jal and jalr
-                default: write_back_value <= execute_result;    // The others (ALU, Shifter)
+                `WB_LOAD: write_back_value <= write_back_result;    // Load inst.
+                `WB_JAL: write_back_value <= PC + 4;    // jal and jalr
+                `WB_NORMAL: write_back_value <= execute_result;    // The others (ALU, Shifter)
             endcase // case ( WB_MUX )
         end
 
