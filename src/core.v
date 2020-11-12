@@ -59,10 +59,9 @@ module riscv#(
 
     wire [31:0] execute_result;
 
-    // PC
     always @(posedge clk or posedge reset)
         begin
-            if (reset) // reset vector
+            if (reset)
                 PC <= 32'h0000_0000;
             else
                 begin
@@ -76,7 +75,6 @@ module riscv#(
     assign instruction = instruction_memory[PC[31:2]];
     assign IR = {instruction[7:0], instruction[15:8], instruction[23:16], instruction[31:24]};
 
-    // decode
     instruction_decoder instruction_decoder(
         .clk(clk),
         .IR(IR),
@@ -92,39 +90,39 @@ module riscv#(
         .change_branch_instruction(change_branch_instruction)
     );
 
-    // Regster File
     rf rf(
         .clk(clk),
-        .RNUM1(`IR_RS1),
-        .RDATA1(rs1_value),
-        .RNUM2(`IR_RS2),
-        .RDATA2(rs2_value),
-        .WNUM(destination_register_number),
-        .WDATA(write_back_value)
+        .register_number_a(`IR_RS1),
+        .data_a(rs1_value),
+        .register_number_b(`IR_RS2),
+        .data_b(rs2_value),
+        .destination_register_numer(destination_register_number),
+        .write_data(write_back_value)
     );
 
-
-    // MUX for source 1 of ALU
     assign input_a = (pc_for_input_a) ? PC:rs1_value; // PC for auipc
-    // from Register File
 
     assign input_b = (instruction_format_type == `FT_R || instruction_format_type == `FT_B) ? rs2_value:immediate_value;
 
-    alu e_alu(.C(alu_instruction), .Y(alu_result), .A(input_a), .B(input_b));
-    shift e_sft(.C(alu_instruction), .Y(shifter_result), .A(input_a), .B(input_b[4:0]));
+    alu e_alu(
+        .instruction(alu_instruction),
+        .result(alu_result),
+        .input_a(input_a),
+        .input_b(input_b)
+    );
 
-    // Branch Target Address
-    // if jalr then target address is calculated by ALU.
-    // if Conditional branch and jal then PC+Imm.
+    shift e_sft(
+        .instruction(alu_instruction),
+        .result(shifter_result),
+        .input_a(input_a),
+        .input_b(input_b[4:0])
+    );
+
     assign branch_addr = (instruction_format_type == `FT_I) ? alu_result:PC+immediate_value;
 
-    // if branch taken, IF and DE stages cancel for control dependency
-    // jal and jalr are always taken, conditional branch has to check condition
     assign change_branch = change_branch_instruction && !((instruction_format_type == `FT_B) && !alu_result[0]);
 
     assign execute_result = (alu_instruction[4:2] == 3'b100) ? shifter_result : alu_result;
-
-    //assign alu_result = execute_result;
 
     // Data Memory via Data Aligner
     daligner #(
@@ -140,10 +138,6 @@ module riscv#(
         .read_status(read_status), // 00: no read,  01: byte, 10: h-word, 11: word
         .load_unsigned(load_signed) // Sign Extend Control
     );
-
-
-
-    // Data Memory
     
 
     // WB

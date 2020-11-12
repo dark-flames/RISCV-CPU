@@ -1,18 +1,21 @@
-module rf(clk, RNUM1, RNUM2, RDATA1, RDATA2, WNUM, WDATA);
-    input clk;
-    input [4:0] RNUM1, RNUM2, WNUM;
-    output [31:0] RDATA1, RDATA2;
-    input [31:0] WDATA;
-
-    reg [31:0] REGISTER_FILE [1:31];
+module rf(
+    input clk,
+    input [4:0] register_number_a,
+    input [4:0] register_number_b,
+    output [31:0] data_a,
+    output [31:0] data_b,
+    input [4:0] destination_register_numer,
+    input [31:0] write_data
+);
+    reg [31:0] register_file [1:31];
 
     always @(posedge clk)
         begin
-            if (WNUM != 5'b00000)
-                REGISTER_FILE[WNUM] <= WDATA;
+            if (destination_register_numer != 5'b00000)
+                register_file[destination_register_numer] <= write_data;
         end
 
-    assign RDATA1 = (RNUM1 != 0) ? REGISTER_FILE[RNUM1]:32'h0000_0000;
-    assign RDATA2 = (RNUM2 != 0) ? REGISTER_FILE[RNUM2]:32'h0000_0000;
+    assign data_a = (register_number_a != 0) ? register_file[register_number_a]:32'h0000_0000;
+    assign data_b = (register_number_b != 0) ? register_file[register_number_b]:32'h0000_0000;
 
 endmodule // rf

@@ -1,21 +1,21 @@
-module shift(C, A, B, Y);
-    input [4:0] C;
-    input [31:0] A;
-    input [4:0] B;
-    output [31:0] Y;
-
+module shift(
+    input [4:0] instruction,
+    input [31:0] input_a,
+    input [4:0] input_b,
+    output [31:0] result
+);
     reg [31:0] tmp;
 
-    always @(C or A or B or tmp)
+    always @(instruction or input_a or input_b or tmp)
         begin
-            tmp = A;
-            if (B[0]) tmp = (C == `ISLL) ? tmp << 1:(C == `ISRL) ? tmp >> 1:tmp >>> 1;
-            if (B[1]) tmp = (C == `ISLL) ? tmp << 2:(C == `ISRL) ? tmp >> 2:tmp >>> 2;
-            if (B[2]) tmp = (C == `ISLL) ? tmp << 4:(C == `ISRL) ? tmp >> 4:tmp >>> 4;
-            if (B[3]) tmp = (C == `ISLL) ? tmp << 8:(C == `ISRL) ? tmp >> 8:tmp >>> 8;
-            if (B[4]) tmp = (C == `ISLL) ? tmp << 16:(C == `ISRL) ? tmp >> 16:tmp >>> 16;
+            tmp = input_a;
+            if (input_b[0]) tmp = (instruction == `ISLL) ? tmp << 1:(instruction == `ISRL) ? tmp >> 1:tmp >>> 1;
+            if (input_b[1]) tmp = (instruction == `ISLL) ? tmp << 2:(instruction == `ISRL) ? tmp >> 2:tmp >>> 2;
+            if (input_b[2]) tmp = (instruction == `ISLL) ? tmp << 4:(instruction == `ISRL) ? tmp >> 4:tmp >>> 4;
+            if (input_b[3]) tmp = (instruction == `ISLL) ? tmp << 8:(instruction == `ISRL) ? tmp >> 8:tmp >>> 8;
+            if (input_b[4]) tmp = (instruction == `ISLL) ? tmp << 16:(instruction == `ISRL) ? tmp >> 16:tmp >>> 16;
         end
 
-    assign Y = tmp;
+    assign result = tmp;
 
 endmodule

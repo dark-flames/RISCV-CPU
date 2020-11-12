@@ -27,6 +27,9 @@ vcd: target/riscv.vcd
 gtkwave: target/riscv.vcd
 	gtkwave target/riscv.vcd
 
+target:
+	mkdir target
+
 target/${PROGRAM}.mif: target/${PROGRAM}.verilog
 	tests/vlogdump2mif.py target/${PROGRAM}.verilog -s
 	mv data.mif target/data.mif
@@ -41,10 +44,10 @@ target/${PROGRAM}.lst: target/${PROGRAM}.elf
 target/${PROGRAM}.elf: $(OBJS)
 	$(LD) $(LD_FLAGS) -o $@ $(OBJS)
 
-target/startup.o:
+target/startup.o: target
 	$(AS) $(AS_FLAGS) tests/startup.s -o $(START_UP)
 
-target/${PROGRAM}.o:
+target/${PROGRAM}.o: target
 	$(CC) $(C_FLAGS) -c -o target/${PROGRAM}.o tests/${PROGRAM}.c
 
 target/riscv.vcd: target/riscv target/${PROGRAM}.mif
