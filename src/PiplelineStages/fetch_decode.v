@@ -22,7 +22,7 @@ module fetch_decode#(
     output reg [4:0] destination_register_number,
     output reg [4:0] register_number_a,
     output reg [4:0] register_number_b,
-    output reg load_signed,
+    output reg load_unsigned,
     output reg pc_for_input_a,
     output reg immediate_value_for_b,
     output reg change_branch_instruction,
@@ -74,7 +74,7 @@ module fetch_decode#(
     wire [1:0] read_status_wire;
     wire [1:0] write_status_wire;
     wire [4:0] destination_register_number_wire;
-    wire load_signed_wire;
+    wire load_unsigned_wire;
     wire pc_for_input_a_wire;
     wire change_branch_instruction_wire;
 
@@ -86,7 +86,7 @@ module fetch_decode#(
         .write_back_type(write_back_type_wire),
         .read_status(read_status_wire),
         .write_status(write_status_wire),
-        .load_signed(load_signed_wire),
+        .load_unsigned(load_unsigned_wire),
         .destination_register_number(destination_register_number_wire),
         .pc_for_input_a(pc_for_input_a_wire),
         .change_branch_instruction(change_branch_instruction_wire)
@@ -101,7 +101,7 @@ module fetch_decode#(
         write_back_type <= write_back_type_wire;
         read_status <= read_status_wire;
         write_status <= write_status_wire;
-        load_signed <= load_signed_wire;
+        load_unsigned <= load_unsigned_wire;
         destination_register_number <= destination_register_number_wire;
         pc_for_input_a <= pc_for_input_a_wire;
         immediate_value_for_b <= (instruction_format_type != `FT_R && instruction_format_type != `FT_B);
