@@ -1,7 +1,6 @@
 `include "src/Modules/format.vh"
 
 module instruction_decoder(
-    input clk,
     input wire [31:0] IR,
     output reg [4:0] alu_instruction,
     output reg [31:0] immediate_value,

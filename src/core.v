@@ -1,5 +1,5 @@
 `include "src/config.vh"
-`include "src/Modules/format.vh"
+`include "src/format.vh"
 
 module riscv#(
     parameter IMEM_BASE=32'h0000_0000,
@@ -18,7 +18,7 @@ module riscv#(
     assign reset = ~reset_n;
 
     // Instruction Memory
-    reg [31:0] instruction_memory [0:IMEM_SIZE-1];
+    
 
     initial
         begin
@@ -76,7 +76,6 @@ module riscv#(
     assign IR = {instruction[7:0], instruction[15:8], instruction[23:16], instruction[31:24]};
 
     instruction_decoder instruction_decoder(
-        .clk(clk),
         .IR(IR),
         .alu_instruction(alu_instruction),
         .immediate_value(immediate_value),
