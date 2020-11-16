@@ -35,8 +35,8 @@ module dmem#(
             if (write_flag[3]) dataw[31:24] <= write_data[31:24];
         end
 
-    always @(posedge clk)
-        if (enable && (| write_flag))
+    always @(dataw or address[16:2])
+        if (enable)
             mem[address[16:2]] <= dataw;
 
 endmodule

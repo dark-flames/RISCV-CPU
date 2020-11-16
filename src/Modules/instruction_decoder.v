@@ -1,4 +1,4 @@
-`include "src/Modules/format.vh"
+`include "src/format.vh"
 
 module instruction_decoder(
     input wire [31:0] IR,

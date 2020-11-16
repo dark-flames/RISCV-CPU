@@ -1,4 +1,5 @@
 `include "src/config.vh"
+`include "src/format.vh"
 `timescale 1ns / 1ns
 
 module riscv_tb ();
@@ -29,7 +30,7 @@ module riscv_tb ();
 
         for( i = addr ; i < 1000 ; i=i+1 )
             begin
-                data = riscv.daligner.dmem.mem[i];
+                data = riscv.ma.da.dmem.mem[i];
                 $display( "%08x %02x%02x%02x%02x", addr+i*4,
                     data[7:0], data[15:8], data[23:16], data[31:24] );
             end
@@ -47,14 +48,14 @@ module riscv_tb ();
         end
 
     always @( posedge CLK )
-        if( riscv.PC == 32'h0000009c ) // Last instruction address on "startup.s"
+        if( riscv.wb.pc == 32'h0000009c &&(riscv.ret == 1)) // Last instruction address on "startup.s"
             begin
-                $display("Time", $time );
+                $display("Time %d %x", $time , riscv.wb.write_back_register_input);
                 dump(0);
                 $finish;
             end
 
-    riscv #( .IMEM_FILE("target/prog.mif"),
+    pipeline_riscv #( .IMEM_FILE("target/prog.mif"),
         .DMEM_FILE("target/data.mif"),
         .IMEM_SIZE(32768),
         .DMEM_SIZE(32768)
@@ -65,7 +66,7 @@ module riscv_tb ();
     //
 `ifdef ST_DEBUG
     always @( negedge CLK )
-    if(  ( riscv.DMWE ) && ( riscv.alu_result[31:20] == 12'h001 ) )
+    if(  ( riscv.DMWE ) && ( riscv.alu_result[31:20] == 12'h001 ))
     $display( "ST  :%08h %08h %01h ", riscv.alu_result, riscv.RF_DATA2, riscv.DMWE );
 `endif
 `ifdef LD_DEBUG

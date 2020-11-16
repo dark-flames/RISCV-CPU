@@ -11,7 +11,7 @@ module daligner#(
         output reg [31:0] read_output,
         input [1:0] write_status, // 00: no write, 01: byte, 10: h-word, 11: word
         input [1:0] read_status, // 00: no read,  01: byte, 10: h-word, 11: word
-        input load_unsigned // Sign Extend Control
+        input load_signed // Sign Extend Control
     );
 
     
@@ -80,15 +80,15 @@ module daligner#(
             case (read_status)
                 `DM_BYTE:
                     case (alu_result[1:0])    // byte access
-                        2'b00: read_output <= {{24{(load_unsigned) ? data_memory_output[31]:1'b0}}, data_memory_output[31:24]};
-                        2'b01: read_output <= {{24{(load_unsigned) ? data_memory_output[23]:1'b0}}, data_memory_output[23:16]};
-                        2'b10: read_output <= {{24{(load_unsigned) ? data_memory_output[15]:1'b0}}, data_memory_output[15:8]};
-                        2'b11: read_output <= {{24{(load_unsigned) ? data_memory_output[7]:1'b0}}, data_memory_output[7:0]};
+                        2'b00: read_output <= {{24{(load_signed) ? data_memory_output[31]:1'b0}}, data_memory_output[31:24]};
+                        2'b01: read_output <= {{24{(load_signed) ? data_memory_output[23]:1'b0}}, data_memory_output[23:16]};
+                        2'b10: read_output <= {{24{(load_signed) ? data_memory_output[15]:1'b0}}, data_memory_output[15:8]};
+                        2'b11: read_output <= {{24{(load_signed) ? data_memory_output[7]:1'b0}}, data_memory_output[7:0]};
                     endcase
                 `DM_HWORD:
                     case (alu_result[1:0])    // half word access
-                        2'b00: read_output <= {{16{(load_unsigned) ? data_memory_output[23]:1'b0}}, data_memory_output[23:16], data_memory_output[31:24]};
-                        2'b10: read_output <= {{16{(load_unsigned) ? data_memory_output[7]:1'b0}}, data_memory_output[7:0], data_memory_output[15:8]};
+                        2'b00: read_output <= {{16{(load_signed) ? data_memory_output[23]:1'b0}}, data_memory_output[23:16], data_memory_output[31:24]};
+                        2'b10: read_output <= {{16{(load_signed) ? data_memory_output[7]:1'b0}}, data_memory_output[7:0], data_memory_output[15:8]};
                     endcase
                 `DM_WORD:  // word access
                     read_output <= {data_memory_output[7:0], data_memory_output[15:8], data_memory_output[23:16], data_memory_output[31:24]};
@@ -98,7 +98,7 @@ module daligner#(
         end
 
     // Data Memory Enable
-    assign enable_data_memory = ((| write_status || | read_status) && (memory_address[31:20] == DMEM_BASE[31:20]));
+    assign enable_data_memory = write_status != `DM_NONE;
 
     dmem#(
         .DMEM_SIZE(DMEM_SIZE),

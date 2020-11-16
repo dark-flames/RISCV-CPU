@@ -6,13 +6,13 @@ LD     = $(CROSS_COMPILE)ld
 OBJ_COPY= $(CROSS_COMPILE)objcopy
 OBJ_DUMP= $(CROSS_COMPILE)objdump
 
-PROGRAM = quick_sort
+PROGRAM = bubble_sort
 C_FLAGS  = -O -march=rv32i -ffreestanding
 AS_FLAGS = --gstabs+ -march=rv32i
 LD_FLAGS = -nostartfiles --no-relax -Bstatic -T tests/link.ld -nostdlib
 OBJS	= target/startup.o target/${PROGRAM}.o
 START_UP = target/startup.o
-SRC = tests/test_bench.v src/*.v src/Modules/*.v
+SRC = tests/test_bench.v src/*.v src/Modules/*.v src/PipelineStages/*.v
 
 all: testcase target/riscv
 

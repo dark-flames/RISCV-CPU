@@ -65,6 +65,7 @@
 `define WB_NORMAL 2'b00
 `define WB_LOAD 2'b01
 `define WB_JAL 2'b10
+`define WB_HICCUP 2'b11
 
 // data memory status
 `define DM_NONE 2'b00
@@ -72,7 +73,7 @@
 `define DM_HWORD 2'b10
 `define DM_WORD 2'b11
 
-//pipline stage
+//pipeline stage
 
 `define PL_F 0 // instruction fetch
 `define PL_D 1 // decode

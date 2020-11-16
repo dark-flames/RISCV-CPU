@@ -1,4 +1,4 @@
-#define SIZE 1000
+#define SIZE 5
 
 #define _PUSH(l, r) stack_r[ptr] = (r);stack_l[ptr++] = (l);
 #define _POP(l, r) r = stack_r[ptr-1]; l = stack_l[(ptr--)-1];
