@@ -136,7 +136,7 @@ module fetch_decode#(
         condition_branch <= instruction_format_type_wire == `FT_B;
         jalr_output <= (write_back_type_wire == `WB_JAL && instruction_format_type_wire == `FT_I);
         // todo:predictor
-        taken <= instruction_format_type_wire == `FT_B;
+        taken <= instruction_format_type_wire != `FT_B;
         // jal
         if(change_branch_instruction_wire && instruction_format_type_wire == `FT_J) begin
             predict_pc_output <= pc_internal + immediate_value_wire;

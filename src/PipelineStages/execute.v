@@ -83,7 +83,7 @@ module execute(
 
     always @(negedge clk) begin
         result <= result_internal;
-        if (write_back_type_internal != `WB_HICCUP && condition_branch_internal && result_internal[0] && taken_internal) begin
+        if (write_back_type_internal != `WB_HICCUP && condition_branch_internal && result_internal[0] && !taken_internal) begin
             mispredict <= 1;
             new_pc <= pc_internal + immediate_value_internal;
         end else begin
