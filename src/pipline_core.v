@@ -134,10 +134,7 @@ module pipeline_riscv#(
         .execute_forward_enable(ex_forward_enable),
         .memory_access_destination_register_number(ma_register_forward),
         .memory_access_result_forward(ma_value_forward),
-        .memory_access_forward_enable(ma_forward_enable),
-        .write_back_destination_register_number(write_back_register_forward),
-        .write_back_result_forward(write_back_value_forward),
-        .write_back_forward_enable(wb_forward_enable)
+        .memory_access_forward_enable(ma_forward_enable)
     );
 
     wire [31:0] ex_result_ma_input;
@@ -217,9 +214,6 @@ module pipeline_riscv#(
     );
 
     wire [4:0] destination_register_number;
-    wire [31:0] write_back_value_forward;
-    wire [4:0] write_back_register_forward;
-    wire wb_forward_enable;
 
     write_back wb(
         .clk(clk),
@@ -229,9 +223,6 @@ module pipeline_riscv#(
         .execute_result(ex_result),
         .write_back_register_input(destination_register_number_wb_input),
         .write_back_value(write_back_value),
-        .write_back_register_output(destination_register_number),
-        .write_back_value_forward(write_back_value_forward),
-        .write_back_register_forward(write_back_register_forward),
-        .forward_enable(wb_forward_enable)
+        .write_back_register(destination_register_number)
     );
 endmodule

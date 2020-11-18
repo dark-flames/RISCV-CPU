@@ -44,8 +44,6 @@ module fetch_decode#(
     wire need_hiccup;
     reg prev_load;
     reg [4:0] prev_destination_register_number;
-    reg [4:0] prev_destination_register_number_internal;
-    reg [31:0] instruction_internal;
     wire [4:0] register_number_a_wire;
     wire [4:0] register_number_b_wire;
 
@@ -64,7 +62,7 @@ module fetch_decode#(
                 prev_load <= 0;
                 reset_ra_and_ex <= 0;
                 write_back_type <= 2'b11;
-                prev_destination_register_number_internal <= 5'b00000;
+                prev_destination_register_number <= 5'b00000;
             end else begin
                 if (jalr == 1) begin // pick pc from stage e to handle jalr
                     pc_internal <= stage_r_pc;
@@ -76,8 +74,6 @@ module fetch_decode#(
                     pc_internal <= predict_pc;
                     reset_ra_and_ex <= 0;
                 end
-                prev_destination_register_number_internal <= prev_destination_register_number;
-                instruction_internal <= instruction;
             end
         end
     
@@ -89,8 +85,8 @@ module fetch_decode#(
     assign need_hiccup = (
         !prev_hiccup && ((
             prev_load == 1 && (
-                prev_destination_register_number_internal == register_number_a_wire ||
-                prev_destination_register_number_internal == register_number_b_wire
+                prev_destination_register_number == register_number_a_wire ||
+                prev_destination_register_number == register_number_b_wire
             )
         ) ||(prev_jalr))) || ret;
     // wire of decoder
@@ -137,7 +133,6 @@ module fetch_decode#(
         register_number_a <= register_number_a_wire;
         register_number_b <= register_number_b_wire;
         pc <= pc_internal;
-        reset_ra_and_ex <= 0;
         condition_branch <= instruction_format_type_wire == `FT_B;
         jalr_output <= (write_back_type_wire == `WB_JAL && instruction_format_type_wire == `FT_I);
         // todo:predictor
@@ -151,7 +146,7 @@ module fetch_decode#(
         // hiccup
         prev_load <= write_back_type_wire == `WB_LOAD;
         prev_jalr <= (write_back_type_wire == `WB_JAL && instruction_format_type_wire == `FT_I);
-        prev_destination_register_number <= destination_register_number_wire;
+        prev_destination_register_number <= reset ? 5'b00000 : destination_register_number_wire;
         prev_hiccup <= prev_hiccup ? 0 : need_hiccup;
     end
 endmodule

@@ -53,10 +53,10 @@ module memory_access#(
         .read_output(da_output),
         .read_status(read_status),
         .write_status(write_status_internal),
-        .load_signed(load_signed_internal)
+        .load_signed(load_signed)
     );
 
-    assign forward_enable = (write_back_type_input == `WB_LOAD || write_back_type_input == `WB_NORMAL);
+    assign forward_enable = (write_back_type_input == `WB_LOAD || write_back_type_input == `WB_NORMAL) && destination_register_number_input != 0;
     assign value_forward = write_back_type_input == `WB_LOAD ? da_output : execute_result;
     assign register_forward = destination_register_number_input;
 

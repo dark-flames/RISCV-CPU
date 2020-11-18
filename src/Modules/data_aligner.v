@@ -98,7 +98,7 @@ module daligner#(
         end
 
     // Data Memory Enable
-    assign enable_data_memory = write_status != `DM_NONE;
+    assign enable_data_memory = ((write_status != `DM_NONE) && (memory_address[31:20] == DMEM_BASE[31:20]));
 
     dmem#(
         .DMEM_SIZE(DMEM_SIZE),

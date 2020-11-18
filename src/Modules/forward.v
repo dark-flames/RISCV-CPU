@@ -8,7 +8,6 @@ module forward(
     input memory_access_forward_enable,
     input [4:0] write_back_destination_register_number,
     input [31:0] write_back_result_forward,
-    input write_back_forward_enable,
     // negedge
     input [4:0] register_number_a,
     input [31:0] register_value_a,
@@ -29,7 +28,7 @@ module forward(
                 memory_access_forward_enable
             ) ? memory_access_result_forward : ((
                 write_back_destination_register_number == register_number_a &&
-                write_back_forward_enable
+                write_back_destination_register_number != 0
             ) ? write_back_result_forward : register_value_a));
 
         result_b = (
@@ -40,7 +39,7 @@ module forward(
                 memory_access_forward_enable
             ) ? memory_access_result_forward : ((
                 write_back_destination_register_number == register_number_b &&
-                write_back_forward_enable
+                write_back_destination_register_number != 0
             ) ? write_back_result_forward : register_value_b));
     end
 

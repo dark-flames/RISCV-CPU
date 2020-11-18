@@ -46,10 +46,7 @@ module register_access(
     input execute_forward_enable,
     input [4:0] memory_access_destination_register_number,
     input [31:0] memory_access_result_forward,
-    input memory_access_forward_enable,
-    input [4:0] write_back_destination_register_number,
-    input [31:0] write_back_result_forward,
-    input write_back_forward_enable
+    input memory_access_forward_enable
 );
 
     wire [31:0] register_data_a_internal;
@@ -82,7 +79,7 @@ module register_access(
 
     reg [4:0] execute_instruction_internal;
 
-    always @(posedge clk or posedge reset) begin
+    always @(posedge clk) begin
         pc_internal <= pc;
         destination_register_number_internal <= destination_register_number_input;
         write_back_type_internal <= write_back_type_input;
@@ -96,9 +93,6 @@ module register_access(
         write_status_internal <= write_status_input;
         load_signed_internal <= load_signed_input;
         jalr_internal <= jalr_input;
-        if(reset) begin
-            write_back_type_internal <= `WB_HICCUP;
-        end
     end
 
     forward fd (
@@ -108,9 +102,8 @@ module register_access(
         .memory_access_destination_register_number(memory_access_destination_register_number),
         .memory_access_result_forward(memory_access_result_forward),
         .memory_access_forward_enable(memory_access_forward_enable),
-        .write_back_destination_register_number(write_back_destination_register_number),
-        .write_back_result_forward(write_back_result_forward),
-        .write_back_forward_enable(write_back_forward_enable),
+        .write_back_destination_register_number(destination_register_number),
+        .write_back_result_forward(write_back_data),
 
         .register_number_a(register_number_a),
         .register_value_a(register_data_a_internal),
@@ -136,7 +129,7 @@ module register_access(
         immediate_value_output <= immediate_value_internal;
         pc_output <= pc_internal;
         read_status_output <= read_status_internal;
-        write_status_output <= write_status_internal;
+        write_status_output <= reset ? `DM_NONE : write_status_internal;
         load_signed_output <= load_signed_internal;
         destination_register_number_output <= destination_register_number_internal;
         write_back_type_output <= reset ? `WB_HICCUP : write_back_type_internal;

@@ -1,4 +1,4 @@
-#define SIZE 40
+#define SIZE 1000
 
 int data[] = {
 465925370 ,

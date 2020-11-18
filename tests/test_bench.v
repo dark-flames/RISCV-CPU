@@ -16,7 +16,7 @@ module riscv_tb ();
         begin
             CLK = 0;
             while( 1 )
-                CLK = #5 ~CLK;
+                CLK = #1 ~CLK;
         end
 
     //
@@ -40,8 +40,8 @@ module riscv_tb ();
     initial
         begin
             RSTN = 1;
-            RSTN = #10 0;
-            RSTN = #10 1;
+            RSTN = #2 0;
+            RSTN = #2 1;
             #4000000000;
             dump(0);
             $finish();
